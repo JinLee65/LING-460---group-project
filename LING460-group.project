@@ -1,0 +1,77 @@
+---
+title: "LING460-project-draft 1"
+output: html_document
+date: "2024-11-16"
+---
+
+```{r}
+library(tidytext)
+library(tidyverse)
+library(rvest)
+```
+
+UK version of the office, episode 1:
+
+```{r}
+UK_office <- read_html("https://subslikescript.com/series/The_Office-290978/season-1/episode-1-Downsize")
+
+# Step 2: Extract script text
+UK_script_text <- UK_office %>%
+  html_nodes(".full-script") %>%  # Replace "p" with the actual tag or class for the script lines
+  html_text() %>%
+  str_trim() %>%
+  str_c(collapse = " ")  # Combine all lines into one long text
+
+# Step 3: Create a DataFrame with the entire script as one observation
+UK_script_df <- tibble(UK_Script = UK_script_text)
+
+# Step 4: Break into words
+UK_words_df <- script_df %>%
+  unnest_tokens(uk_words, UK_Script)  # Splits the "Script" column into individual words
+
+# View the resulting DataFrame
+print(UK_words_df)
+
+# Optional: Save to a CSV
+write_csv(words_df, "UK_office_words.csv")
+
+#Taking out the ad words 
+UK_words_df %>%
+  mutate(index = row_number()) %>%
+  select("index", "uk_words") %>%
+  filter(index > 14) %>%
+  mutate(index = row_number())
+```
+
+```{r}
+US_office <- read_html("https://subslikescript.com/series/The_Office-386676/season-1/episode-1-Pilot")
+
+# Step 2: Extract script text
+US_script_text <- US_office %>%
+  html_nodes(".full-script") %>%  # Replace "p" with the actual tag or class for the script lines
+  html_text() %>%
+  str_trim() %>%
+  str_c(collapse = " ")  # Combine all lines into one long text
+
+# Step 3: Create a DataFrame with the entire script as one observation
+US_script_df <- tibble(US_Script = US_script_text)
+
+# Step 4: Break into words
+US_words_df <- US_script_df %>%
+  unnest_tokens(us_words, US_Script)  # Splits the "Script" column into individual words
+
+# View the resulting DataFrame
+print(US_words_df)
+
+# Optional: Save to a CSV
+write_csv(US_words_df, "UK_office_words.csv")
+
+#Taking out the ad words 
+US_words_df %>%
+  mutate(index = row_number()) %>%
+  select("index", "us_words") %>%
+  filter(index > 14) %>%
+  mutate(index = row_number())
+  
+
+```
